@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 typedef unsigned char *byte_pointer;
 
@@ -25,8 +26,8 @@ void show_pointer(void *x) {
 }
 
 void show_value_at_pointer(int *ptr) {
-  printf("Address stored in pointer: %p\n", (void *)ptr);
-  printf("Value at that address: %d\n", *ptr);
+  printf("> Address stored in pointer: %p\n", (void *)ptr);
+  printf("  value at that address: %d\n", *ptr);
 }
 
 void test_show_bytes(int val) {
@@ -38,6 +39,9 @@ void test_show_bytes(int val) {
   show_pointer(pval);
 
   show_value_at_pointer(pval);
+
+  const char *s = "abcxyz";
+  show_bytes((byte_pointer) s, strlen(s));
 }
 
 int main() {
