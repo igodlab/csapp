@@ -2,3 +2,6 @@
 
 # Executable and compilation byproducts
 build/
+*.i
+*.s
+*.o
