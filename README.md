@@ -4,7 +4,7 @@
 
 A great resource to compare solutions is the dreamanddead's site [CSAPP-3E-SOLUTIONS](https://dreamanddead.github.io/CSAPP-3e-Solutions/)
 
-Amdahl's la states: 
+Amdahl's law states: 
 
 $$
 T_o/T_n = \frac{1}{(1-\alpha) + \alpha / k}
