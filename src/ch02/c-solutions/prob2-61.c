@@ -26,7 +26,7 @@ int main() {
   int xmaskedC = x & 0xFFu;
   int condC = !!xmaskedC;
 
-  int xmaskedD = x | ~((int) (0xFFu << ((sizeof(int) - 1) << 3)));
+  int xmaskedD = x | ~(0xFFu << ((sizeof(int) - 1) << 3));
   int condD = !!~xmaskedD;
   
   printf("A. Any bit of x=%08x equals 1? : %i\n", x, condA);  
