@@ -25,7 +25,7 @@ unsigned replace_byte(unsigned x, int i, unsigned char b) {
 
   // Recall that `x << k` yields `x * 2^k`, thus `x << 3`, moves in byte-steps 
   unsigned mask = 0xFFu << (i << 3);
-  unsigned replacement_byte = ((unsigned) b) << (i << 3);
+  unsigned replacement_byte = b << (i << 3);
   return (x & ~mask) | replacement_byte;
 }
 
