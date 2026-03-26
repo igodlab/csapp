@@ -5,3 +5,8 @@ build/
 *.i
 *.s
 *.o
+*.out
+
+# helper scripts
+helpers*.c
+aux*.c
