@@ -23,16 +23,55 @@ int sra(int x , int k)  {
 ```
 */
 
+#include <assert.h>
 #include <stdio.h>
 
+// Word size
+const unsigned w = sizeof(int) << 3;
+
+// logical `x >> k` replica 
 unsigned srl(unsigned x, int k) {
+  assert(k < w && "Error in custom logical shift: k must be smaller than word size");
   /* Perform shift arithmetically */
   unsigned xsra = (int) x >> k;
-  // fill function
+  
+  /* >>> Complete rest of function >>> */
+  // PERF: breaking down mask `((1 << k) - 1) << (w - k)` by parts:
+  // `(1 << k)`: shifts unique bit-1 by k-bits to the left eg. `=0000 1000`
+  // `(1 << k) - 1`: leverages addition (-1=~(1)+1) with carry out of the MSB, leaving k rightmost bits equal to ones eg. `=(+carry)0000 0111`
+  // `((1 << k) - 1) << (w - k)`: shifts all k-leftmost-ones to the left by (w-k)-bits eg. `=1110 0000`
+  return xsra & ~(((1 << k) - 1) << (w - k));
+  /* <<< Complete rest of function <<< */
+
 }
 
+// artithmetic `x >> k` replica 
 int sra(int x, int k) {
+  assert(k < w && "Error in custom arithmetic shift: k must be smaller than word size");
   /* Perform shift logically */
   int xsrl = (unsigned) x >> k;
-  // fill function
+
+  /* >>> Complete rest of function >>> */
+  // grab most significant byte
+  signed char msbyte = ((unsigned char *) &x)[sizeof(int) - 1];
+
+  return (int) msbyte;
+  // return xsrl & ~(((1 << k) - 1) << (w - k));
+  /* <<< Complete rest of function <<< */
+}
+
+int main(void) {
+  unsigned x;
+  int k;
+  unsigned k_shft;
+
+  while(1) {
+    printf("\nEnter x followed by k:\n");
+    scanf("%x %i", &x, &k);
+    
+    printf("You entered x=0x%032b and k=0x%08x\n", x, k);
+    printf("shifted srl = 0x%032b\n", srl(x, k));
+    printf("shifted sra = 0x%032b\n", sra(x, k));
+  }
+  return 0;
 }
