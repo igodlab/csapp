@@ -52,8 +52,7 @@ static void fill(void *buf, size_t n, unsigned char byte) {
     memset(buf, byte, n);
 }
 
-// ── tests ─────────────────────────────────────────────────────────────────────
-
+// various tests
 void test_negative_maxbytes_does_not_copy(void) {
     unsigned char buf[16];
     fill(buf, sizeof(buf), 0xAB);
@@ -157,7 +156,6 @@ void test_very_negative_maxbytes_does_not_copy(void) {
         assert(buf[i] == 0xAA);
 }
 
-// ── main ──────────────────────────────────────────────────────────────────────
 int main(void) {
     printf("Running copy_int tests...\n");
     RUN(test_negative_maxbytes_does_not_copy);
