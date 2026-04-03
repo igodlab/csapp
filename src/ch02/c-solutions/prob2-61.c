@@ -17,7 +17,7 @@ additional restriction that you may not use equality (==) or inequality (!=) tes
 int main() {
   int x;
   printf("enter an integer:\n");
-  scanf("%i", &x);
+  scanf("%x", &x);
 
   // Conditions
   int condA = !!x;
