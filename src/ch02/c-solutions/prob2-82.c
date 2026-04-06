@@ -31,31 +31,31 @@ mathematical principles. Otherwise, give an example of arguments that make it yi
 #include <stdio.h>
 #include <stdlib.h>
 
-int expressionA(int x, int y) {
+char expressionA(int x, int y) {
   // No! Due to Two's-complement assymmetry if x or y=-INT_MIN overflows!
   // because -(-2^(w-1))=INT_MAX+1 which exceeds the TMax limit: 2^(w-1)-1
   return (x<y) == (-x>-y);
 }
 
-int expressionB(int x, int y) {
+char expressionB(int x, int y) {
   // Yes! Math shows the equivalence
   // (x+y)*2^4 + y-x = y*(2^4+1) + x*(2^4-1) = 17*y + 15*x
   return ((x+y)<<4) + y-x == 17*y+15*x;
 }
 
-int expressionC(int x, int y) {
+char expressionC(int x, int y) {
   // Yes! Two's-complement sign inversion -|z| = ~|z| + 1, thus ~|z| = -|z| - 1
   // -|x|-1 - |y|-1 + 1 = -(|x|+|y|)-1 = ~|x+y|
   return ~x+~y+1 == ~(x+y);
 }
 
-int expressionD(int x, int y, int ux, int uy) {
+char expressionD(int x, int y, int ux, int uy) {
   // Yes! Type casting acts as a distributed operator under addition, thus:
   // -(unsigned)(y-x) = -((unsigned)y - (unsigned)x) = ux - uy
   return (ux-uy) == -(unsigned)(y-x);
 }
 
-int expressionE(int x, int y) {
+char expressionE(int x, int y) {
   // Yes! Math shows the equvalence:
   // x*2^(-2) * 2^2 = x
   return ((x >> 2) << 2) <= x;
