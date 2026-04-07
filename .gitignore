@@ -1,11 +1,15 @@
 *.pdf
 
-# Executable and compilation byproducts
-build/
+# Executable and compilation binary byproducts
+src/**/build/
 *.i
 *.s
 *.o
 *.out
+
+# Unity object files (if ever compiled separately)
+vendor/unity/*.o
+vendor/unity/*.out
 
 # helper scripts
 helpers*.c
