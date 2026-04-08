@@ -6,7 +6,8 @@
 #   make clean            remove build artefacts
 
 CC     := gcc
-CFLAGS := -Wall -Wextra -g
+CFLAGS := -g
+# CFLAGS := -Wall -Wextra -g
 
 UNITY  := ../../../vendor/unity
 SOLS   := ../c-solutions
