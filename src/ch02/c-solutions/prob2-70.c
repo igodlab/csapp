@@ -12,8 +12,6 @@ Your function should follow the bit-level integer coding rules (page 128).
 */
 
 #include <assert.h>
-#include <limits.h>
-#include <stdio.h>
 
 const unsigned w = sizeof(int) << 3;
 
