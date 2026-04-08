@@ -15,7 +15,6 @@ replace_byte(0x12345678 , 0 ,  0xAB) --> 0x123456AB
 */
 
 #include <assert.h>
-// #include <stdint.h>
 
 unsigned replace_byte(unsigned x, int i, unsigned char b) {
   // Make sure i isn't out of range. Since we start counting on 0 to (w/8 - 1).
