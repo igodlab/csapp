@@ -8,7 +8,9 @@
  */
 
 #include "../../../vendor/unity/unity.h"
-#include "../c-solutions/prob2-59.h"
+
+// forward declaration (instead of a header file)
+unsigned int merge_lsb(unsigned int x, unsigned int y);
 
 void setUp(void)    {}
 void tearDown(void) {}
