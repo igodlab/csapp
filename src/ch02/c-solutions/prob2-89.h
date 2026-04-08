@@ -2,7 +2,7 @@
 #define PROB2_89_H
 
 /*
- * CSAPP 3e — Problem 2.89 public interface.
+ * CSAPP American 3ed — Problem 2.89 public interface.
  *
  * Each condX function returns 1 if the expression holds for the given
  * inputs, 0 otherwise.
