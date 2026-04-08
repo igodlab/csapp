@@ -22,7 +22,7 @@ TEST_BINS := $(patsubst %.c,$(BUILD)/%,$(TEST_SRCS))
 .PHONY: all
 all: $(TEST_BINS)
 	@for bin in $(TEST_BINS); do \
-		echo "\033[1mRunning $$bin\033[0m"; \
+		echo -e "\033[1mRunning $$bin\033[0m"; \
 		$$bin; \
 		echo ""; \
 	done
