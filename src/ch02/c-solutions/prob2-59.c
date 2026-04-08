@@ -5,17 +5,6 @@
   this would give 0x765432EF. 
 */
 
-#include <stdint.h>
-#include <stdio.h>
-#include <assert.h>
-
-int main(void) {
-  uint32_t x = 0x89ABCDEF;
-  uint32_t y = 0x76543210;
-
-  uint32_t word = (x & 0xFF) | (y & ~0xFFu);
-  assert(word == 0x765432EF);
-  printf("hex: 0x%08x\n", word);
-
-  return 0;
+unsigned int merge_lsb(unsigned int x, unsigned int y) {
+  return (x & 0xFF) | (y & ~0xFFu);
 }

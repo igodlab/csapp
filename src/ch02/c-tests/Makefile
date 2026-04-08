@@ -6,11 +6,11 @@
 #   make clean            remove build artefacts
 
 CC     := gcc
-CFLAGS := -std=c11 -Wall -Wextra -g
+CFLAGS := -Wall -Wextra -g
 
 UNITY  := ../../../vendor/unity
 SOLS   := ../c-solutions
-NOTES  := ../notes
+NOTES  := ../c-notes
 BUILD  := build
 
 # ── Discover all tests ────────────────────────────────────────────────────────
