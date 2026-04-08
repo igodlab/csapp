@@ -36,8 +36,8 @@ E. dx / dx == dz / dz
 #include <stdio.h>
 #include <string.h>
 
-// NOTE: The five conditions (volatile prevents the compiler from collapsing   ── */
-// both sides into the same subexpression before comparing them)         ── */
+// NOTE: The five conditions (volatile prevents the compiler from collapsing
+// both sides into the same subexpression before comparing them) 
 int condA(int x, double dx) {
   return (float)x == (float)dx;
 }
@@ -64,6 +64,9 @@ int condC(double dx, double dy, double dz) {
   return lhs == rhs;
 }
 
+// NOTE: This problem exceptionally uses a special gcc set of flags to force
+// the compiler not to use optimizations that solve and hide multiplication 
+// non-associativity due to compounding errors (condition D) 
 int condD(double dx, double dy, double dz) {
   /*
    * Products of two int32 values can be $2^{31}2^{31}\sim 62$ bits wide. A double only holds
