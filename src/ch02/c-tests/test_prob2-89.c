@@ -8,10 +8,16 @@
  */
 
 #include "../../../vendor/unity/unity.h"
-#include "../c-solutions/prob2-89.h"
-
 #include <limits.h>
-#include <math.h>
+
+int  condA(int x, double dx);
+int  condB(int x, int y, double dx, double dy);
+int  condC(double dx, double dy, double dz);
+int  condD(double dx, double dy, double dz);
+int  condE(double dx, double dz);
+
+void prob289_print_bits(const char *name, double v);
+
 
 void setUp(void)    {}   /* required by Unity; nothing to reset here */
 void tearDown(void) {}
