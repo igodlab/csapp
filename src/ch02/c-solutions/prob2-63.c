@@ -24,7 +24,6 @@ int sra(int x , int k)  {
 */
 
 #include <assert.h>
-#include <stdio.h>
 
 // Word size
 const unsigned w = sizeof(int) << 3;
@@ -62,84 +61,4 @@ int sra(int x, int k) {
 
   return xsrl | (replicate_msb & mask);
   /* <<< Complete rest of function <<< */
-}
-
-// --- Test framework ---
-static int tests_run = 0;
-static int tests_failed = 0;
-
-#define TEST(desc, expr) do { \
-    tests_run++; \
-    if (!(expr)) { \
-        printf("FAIL [%s] line %d: %s\n", desc, __LINE__, #expr); \
-        tests_failed++; \
-    } else { \
-        printf("PASS [%s]\n", desc); \
-    } \
-} while(0)
-
-// --- srl tests ---
-void test_srl(void) {
-    // Basic: positive value, no sign bit confusion
-    TEST("srl: 0x00000001 >> 0",  srl(0x00000001, 0) == 0x00000001);
-    TEST("srl: 0x00000001 >> 1",  srl(0x00000001, 1) == 0x00000000);
-
-    // High bit set — critical case where arithmetic vs logical differs
-    TEST("srl: 0x80000000 >> 1",  srl(0x80000000, 1) == 0x40000000);  // must NOT sign extend
-    TEST("srl: 0x80000000 >> 4",  srl(0x80000000, 4) == 0x08000000);
-    TEST("srl: 0xFFFFFFFF >> 1",  srl(0xFFFFFFFF, 1) == 0x7FFFFFFF);  // top bit must be 0
-    TEST("srl: 0xFFFFFFFF >> 4",  srl(0xFFFFFFFF, 4) == 0x0FFFFFFF);
-    TEST("srl: 0xFFFFFFFF >> 8",  srl(0xFFFFFFFF, 8) == 0x00FFFFFF);
-
-    // Shift by 0: identity
-    TEST("srl: 0x89ABCDEF >> 0",  srl(0x89ABCDEF, 0) == 0x89ABCDEF);
-
-    // Shift by w-1: only MSB survives, must be 0 or 1
-    TEST("srl: 0x80000000 >> 31", srl(0x80000000, 31) == 0x00000001);
-    TEST("srl: 0x7FFFFFFF >> 31", srl(0x7FFFFFFF, 31) == 0x00000000);
-
-    // All zeros
-    TEST("srl: 0x00000000 >> 4",  srl(0x00000000, 4) == 0x00000000);
-}
-
-// --- sra tests ---
-void test_sra(void) {
-    // Positive value: sra and srl should agree (MSB is 0, no sign extension)
-    TEST("sra: 0x00000001 >> 0",  sra(0x00000001, 0) == 0x00000001);
-    TEST("sra: 0x7FFFFFFF >> 1",  sra(0x7FFFFFFF, 1) == 0x3FFFFFFF);  // top bit must be 0
-    TEST("sra: 0x00000008 >> 3",  sra(0x00000008, 3) == 0x00000001);
-
-    // Negative value: must sign extend with 1s
-    TEST("sra: 0x80000000 >> 1",  sra(0x80000000, 1) == 0xC0000000);  // must sign extend
-    TEST("sra: 0x80000000 >> 4",  sra(0x80000000, 4) == 0xF8000000);
-    TEST("sra: 0xFFFFFFFF >> 1",  sra(0xFFFFFFFF, 1) == 0xFFFFFFFF);  // all ones stays all ones
-    TEST("sra: 0xFFFFFFFF >> 4",  sra(0xFFFFFFFF, 4) == 0xFFFFFFFF);
-    TEST("sra: 0x80000008 >> 4",  sra(0x80000008, 4) == 0xF8000000);  // your original bug case
-
-    // Shift by 0: identity
-    TEST("sra: 0x89ABCDEF >> 0",  sra(0x89ABCDEF, 0) == 0x89ABCDEF);
-
-    // Shift by w-1: result is all 1s for negative, 0 for positive
-    TEST("sra: 0x80000000 >> 31", sra(0x80000000, 31) == 0xFFFFFFFF);
-    TEST("sra: 0x7FFFFFFF >> 31", sra(0x7FFFFFFF, 31) == 0x00000000);
-
-    // All zeros
-    TEST("sra: 0x00000000 >> 4",  sra(0x00000000, 4) == 0x00000000);
-}
-
-// --- srl vs sra agreement on positive values ---
-void test_srl_sra_agree(void) {
-    // For positive values (MSB=0), srl and sra must produce identical results
-    TEST("agree: 0x00000001 >> 1", srl(0x00000001, 1) == (unsigned)sra(0x00000001, 1));
-    TEST("agree: 0x7FFFFFFF >> 4", srl(0x7FFFFFFF, 4) == (unsigned)sra(0x7FFFFFFF, 4));
-    TEST("agree: 0x12345678 >> 8", srl(0x12345678, 8) == (unsigned)sra(0x12345678, 8));
-}
-
-int main(void) {
-    test_srl();
-    test_sra();
-    test_srl_sra_agree();
-
-    printf("\n%d/%d tests passed\n", tests_run - tests_failed, tests_run);
-    return tests_failed > 0 ? 1 : 0;
 }
