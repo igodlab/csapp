@@ -1,8 +1,8 @@
 /*
 2.82 ♦ 
-We are running programs where values of type in t are 32 bits. They are repre­
-sented in two's complement, and they are right shifted arithmetically. Values of 
-type unsigned are also 32 bits. 
+We are running programs where values of type int are 32 bits. They are represented 
+in two's complement, and they are right shifted arithmetically. Values of type 
+unsigned are also 32 bits. 
 
 We generate arbitrary values x and y, and convert them to unsigned values as 
 follows: 
