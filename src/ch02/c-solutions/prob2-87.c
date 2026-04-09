@@ -36,11 +36,7 @@ Number with hex       3BB0         --------     --------     --------     ------
 
 #include <stdio.h>
 
-int hex(int x) {
-  return 0;
-}
-
-int main(void) {
+void print_table(void) {
     // Column width
     int w = 12;
 
@@ -68,6 +64,5 @@ int main(void) {
     ROW("-inf",                " FC00", " ---------", " ---", " -inf"        , " -inf"    );
     ROW("Number with hex",     " 3BB0", " 1968/1024", " -1" , " 123x2^(-7)"  , " 0.961"   );
     ROW(" representation 3BB0"," ",     " "         , " "   , " "            , " "        );
-
-    return 0;
+#undef ROW
 }
