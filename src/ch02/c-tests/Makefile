@@ -40,6 +40,7 @@ $(BUILD)/test_%: test_%.c | $(BUILD)
 
 # ── Per-test overrides ────────────────────────────────────────────────────────
 # Add flags for tests that need non-vanilla compilation.
+CFLAGS_$(BUILD)/test_prob2-82 := -fwrapv -fno-strict-overflow
 CFLAGS_$(BUILD)/test_prob2-89 := -mfpmath=sse -msse2 -fno-associative-math -mno-fma
 
 $(BUILD):
