@@ -20,8 +20,6 @@ int float_le(float x, float y) {
 ```
 */
 
-#include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 
 // Extra f2u custom function (extra part not what the problem asks to solve)
@@ -55,14 +53,6 @@ int float_le(float x, float y) {
   return 
     ((ux & mask_sb) == 0 && (uy & mask_sb) == 0) ||
     (sx && !sy) ||
-    (!sx && !sy && x <= y) ||
-    (sx && sy && x >= y);
-}
-
-int main(void) {
-  float f1 = -55.359375;
-  float f2 = -55.35938;
-
-  printf("fst arg <= snd arg ? : %u\n", float_le(f1, f2));
-  return 0;
+    (!sx && !sy && ux <= uy) ||
+    (sx && sy && ux >= uy);
 }
