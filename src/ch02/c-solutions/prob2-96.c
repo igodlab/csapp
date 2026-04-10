@@ -17,12 +17,27 @@ paring the result to what would be obtained using your machine's floating-point
 operations.
 */
 
+#include <stdint.h>
 #include <stdio.h>
 
-int float_bits(float_bits f) {
-  return 0;
+
+const int w = sizeof(float) << 3;
+
+typedef union {
+  float f;
+  uint32_t u;
+} float_bits;
+
+int float_f2i(float_bits f) {
+  unsigned mask_sign = 1u << (w - 1);
+  int s = !!(f.u & mask_sign);
+  // int mantissa = 
+  return s;
 }
 
 int main(void) {
+  float_bits f;
+  scanf("%f", &f.f);
+  printf("sign of s(f)=%i", float_f2i(f));
   return 0;
 }
