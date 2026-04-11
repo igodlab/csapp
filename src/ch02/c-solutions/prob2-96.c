@@ -20,8 +20,10 @@ operations.
 #include <stdint.h>
 #include <stdio.h>
 
-
 const int w = sizeof(float) << 3;
+const int exponent_bits = 8;
+const int bias = (1 << (exponent_bits - 1)) - 1;
+const int fraction_bits = 23;
 
 typedef union {
   float f;
@@ -29,15 +31,31 @@ typedef union {
 } float_bits;
 
 int float_f2i(float_bits f) {
-  unsigned mask_sign = 1u << (w - 1);
-  int s = !!(f.u & mask_sign);
-  // int mantissa = 
-  return s;
+  unsigned exponent_mask = 0xFFu << (w - 1 - exponent_bits);
+  int S = f.u >> (w - 1);
+  int exponent = (f.u & exponent_mask) >> (w - 1 - exponent_bits);
+  int E = exponent - bias;
+  int mantissa = f.u & ((1u << fraction_bits) - 1);
+  return mantissa;
+}
+
+void print_bits(unsigned int n) {
+    for (int i = w - 1; i >= 0; i--) {
+        // Shift bit at position 'i' to the 0th position and mask it
+        int bit = (n >> i) & 1;
+        printf("%d", bit);
+        
+        // Optional: add a space every 8 bits for readability
+        if (i % 8 == 0 && i != 0) printf(" ");
+    }
+    printf("\n");
 }
 
 int main(void) {
   float_bits f;
   scanf("%f", &f.f);
-  printf("sign of s(f)=%i", float_f2i(f));
+  print_bits(f.u & (0xFFu << 23));
+  print_bits(float_f2i(f));
+  printf("%i", float_f2i(f));
   return 0;
 }
