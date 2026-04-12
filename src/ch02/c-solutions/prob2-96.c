@@ -17,6 +17,7 @@ paring the result to what would be obtained using your machine's floating-point
 operations.
 */
 
+#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -30,13 +31,40 @@ typedef union {
   uint32_t u;
 } float_bits;
 
+int weighted_digits() {
+  return 0;
+}
+
 int float_f2i(float_bits f) {
   unsigned exponent_mask = 0xFFu << (w - 1 - exponent_bits);
   int S = f.u >> (w - 1);
   int exponent = (f.u & exponent_mask) >> (w - 1 - exponent_bits);
   int E = exponent - bias;
   int mantissa = f.u & ((1u << fraction_bits) - 1);
-  return mantissa;
+  
+  int reconstructed_bits = (S << (w - 1)) | ((E + bias) << (w - 1 - exponent_bits)) | ((unsigned)mantissa);
+  // return reconstructed_bits;
+
+  // Denormalized numbers -> all round to zero
+  if (0 == exponent) 
+  {
+    return 0;
+  } 
+  // Positive (negative) infinity returns TMax (TMin)
+  else if (1 == !!~(exponent | ~((1 << exponent_bits) - 1))) 
+  {
+    if (S == 1) {
+      return INT_MAX;
+    } else {
+      return INT_MIN;
+    }
+  }
+  // Exponent within range gets rounded to nearest unsigned integer
+  // else if (E >= 1 && E <= ((1 << exponent_bits) - 2)) {
+  // IEEE largest normalized: 340282346638528859811704183484516925440
+  else {
+    return reconstructed_bits;
+  }
 }
 
 void print_bits(unsigned int n) {
@@ -54,7 +82,7 @@ void print_bits(unsigned int n) {
 int main(void) {
   float_bits f;
   scanf("%f", &f.f);
-  print_bits(f.u & (0xFFu << 23));
+  print_bits(f.u);
   print_bits(float_f2i(f));
   printf("%i", float_f2i(f));
   return 0;
