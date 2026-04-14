@@ -13,4 +13,6 @@ vendor/unity/*.out
 
 # helper scripts
 helpers*.c
+helpers*.h
 aux*.c
+aux*.h
