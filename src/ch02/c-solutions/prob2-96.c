@@ -17,6 +17,7 @@ paring the result to what would be obtained using your machine's floating-point
 operations.
 */
 
+#include "utils.h"
 #include <float.h>
 #include <limits.h>
 #include <stdint.h>
@@ -32,28 +33,53 @@ typedef union {
   uint32_t u;
 } float_bits;
 
-int weighted_digits() {
-  return 0;
+int weighted_digits(uint32_t raw_x, int E) {
+  int whole_part = 1 << E; // Account for implicit one in significand: 1.fraction
+  float frac_part = 0.0f;
+  int weight_exp = E - 1;
+  for (int i = fraction_bits - 1; i >= 0; i--) {
+    int positional_bit = (raw_x >> i) & 1;
+    // Check if exponent should be positive or negative
+    // printf("\ncounter = %i, E=%i", i, weight_exp);
+    if (i > fraction_bits - 1 - E) 
+    {
+      whole_part += positional_bit << weight_exp;
+      weight_exp--;
+    } else
+    {
+      frac_part += (float)positional_bit / (1 << ((int)(~weight_exp + 1)));
+      weight_exp--;
+    }
+  }
+
+  printf("\nwhole_part=%i\n", whole_part);
+  printf("frac_part=%f\n", frac_part);
+  if (frac_part > 0.5) 
+  {
+    return whole_part + 1;
+  } else
+  {
+    return whole_part;
+  }
 }
 
 int float_f2i(float_bits f) {
-  unsigned exponent_mask = 0xFFu << (w - 1 - exponent_bits);
   int S = f.u >> (w - 1);
-  int exponent = (f.u & exponent_mask) >> (w - 1 - exponent_bits);
+  unsigned int exponent_u = f.u >> (w - 1 - exponent_bits);
+  int exponent = exponent_u & 0xFFu;
   int E = exponent - bias;
   int mantissa = f.u & ((1u << fraction_bits) - 1);
   
   int reconstructed_bits = (S << (w - 1)) | ((E + bias) << (w - 1 - exponent_bits)) | ((unsigned)mantissa);
   // return reconstructed_bits;
 
-  // 3402823466385288598117042
   // Denormalized numbers -> all round to zero
   if (0 == exponent) 
   {
     return 0;
   } 
-  // Positive (negative) infinity returns TMax (TMin)
-  else if (1 == !!~(exponent | ~((1 << exponent_bits) - 1))) 
+  // All ones exponent 0xFF -> Positive (negative) infinity returns TMax (TMin)
+  else if (0xFFu == exponent) 
   {
     if (S == 1) {
       return INT_MAX;
@@ -64,37 +90,16 @@ int float_f2i(float_bits f) {
   // Exponent within range gets rounded to nearest unsigned integer
   //
   // 340282346638528859811704183484516925440 (FLT_MAX)
-  //
-  // 340282346638528859811704200000000000000 (value actually stored in float)
-  // +       3361471140188295800000000000000 (error due to conversion)
-  // ---------------------------------------
-  // 340282350000000000000000000000000000000 (decimal representation of 0X7F7FFFFF)
-  //
   else {
-    return reconstructed_bits;
+    return weighted_digits(f.u, E) | (S << (w - 1));
   }
-}
-
-void print_bits(unsigned int n) {
-    for (int i = w - 1; i >= 0; i--) {
-        // Shift bit at position 'i' to the 0th position and mask it
-        int bit = (n >> i) & 1;
-        printf("%d", bit);
-        
-        // Optional: add a space every 8 bits for readability
-        if (i % 8 == 0 && i != 0) printf(" ");
-    }
-    printf("\n");
 }
 
 int main(void) {
   float_bits f;
   scanf("%f", &f.f);
-  printf("FLT_MIN=%038f\n", FLT_MIN);
-  printf("FLT_MAX=%038f\n", FLT_MAX);
-  printf("FLT_MAX=%038f\n", FLT_MAX - 2e31f);
   print_bits(f.u);
   print_bits(float_f2i(f));
-  printf("%i", float_f2i(f));
+  printf("%i\n", float_f2i(f));
   return 0;
 }

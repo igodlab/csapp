@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "utils.h"
 
 void print_bits(unsigned int n) {
   int w = sizeof(n) << 3;
@@ -11,4 +12,5 @@ void print_bits(unsigned int n) {
     // Optional: add a space every 8 bits for readability
     if (i % 8 == 0 && i != 0) printf(" ");
   }
+  printf("\n");
 }

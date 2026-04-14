@@ -3,4 +3,4 @@
 
 void print_bits(unsigned int n);
 
-#endif
+#endif /* UTILS_H */
