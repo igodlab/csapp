@@ -17,6 +17,7 @@ paring the result to what would be obtained using your machine's floating-point
 operations.
 */
 
+#include <float.h>
 #include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -45,6 +46,7 @@ int float_f2i(float_bits f) {
   int reconstructed_bits = (S << (w - 1)) | ((E + bias) << (w - 1 - exponent_bits)) | ((unsigned)mantissa);
   // return reconstructed_bits;
 
+  // 3402823466385288598117042
   // Denormalized numbers -> all round to zero
   if (0 == exponent) 
   {
@@ -60,8 +62,14 @@ int float_f2i(float_bits f) {
     }
   }
   // Exponent within range gets rounded to nearest unsigned integer
-  // else if (E >= 1 && E <= ((1 << exponent_bits) - 2)) {
-  // IEEE largest normalized: 340282346638528859811704183484516925440
+  //
+  // 340282346638528859811704183484516925440 (FLT_MAX)
+  //
+  // 340282346638528859811704200000000000000 (value actually stored in float)
+  // +       3361471140188295800000000000000 (error due to conversion)
+  // ---------------------------------------
+  // 340282350000000000000000000000000000000 (decimal representation of 0X7F7FFFFF)
+  //
   else {
     return reconstructed_bits;
   }
@@ -82,6 +90,9 @@ void print_bits(unsigned int n) {
 int main(void) {
   float_bits f;
   scanf("%f", &f.f);
+  printf("FLT_MIN=%038f\n", FLT_MIN);
+  printf("FLT_MAX=%038f\n", FLT_MAX);
+  printf("FLT_MAX=%038f\n", FLT_MAX - 2e31f);
   print_bits(f.u);
   print_bits(float_f2i(f));
   printf("%i", float_f2i(f));
