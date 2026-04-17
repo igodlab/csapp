@@ -19,7 +19,6 @@ operations.
 
 #include "utils.h"
 #include <float.h>
-#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -38,41 +37,45 @@ typedef union {
 // $$
 // b = \sum_{i=-n}^E b_i\times 2^i
 // $$
-int weighted_digits(uint32_t raw_mantissa, int E, int sign) {
+int weighted_digits(uint32_t raw_mantissa, int E, int S) {
   // Account for implicit one in significand: 1.mantissa
   int whole_part = 1 << E; // Set its value with the largest exponent ie. 1 x 2^E
   int weight_exp = E - 1; // This is the second largest exponent base (only) ie. 2^(E-1)
   float frac_part = 0.0f;
 
-  printf("\nimplicit digit = 1x2^%i", E);
+  // zip positional bits w/ its corresponding power of 2 base (from left to right)
   for (int i = mantissa_bits - 1; i >= 0; i--) {
     int positional_bit = (raw_mantissa >> i) & 1; // positional bit b_i
-    printf("\ncounter = %i, %01ix2^%i", i, positional_bit, weight_exp);
 
+    // check whether the positional_bit is to the left or right of the decimal point
     if (weight_exp >= 0)
     {
-      printf(", 2^i = %i", positional_bit << weight_exp);
-      whole_part += positional_bit << weight_exp;
+      // b_i x 2^i
+      whole_part += positional_bit << weight_exp; 
+      weight_exp--;
     } else
     {
-      printf(", 2^-i = %f", (float)positional_bit / (1 << (~weight_exp + 1)));
+      // b_i x 2^-i
       frac_part += (float)positional_bit / (1 << (~weight_exp + 1));
+      weight_exp--;
     }
   }
 
-  weight_exp--;
-  if (1 == sign) 
-  {
-    printf("\nsign is negative");
-    printf("\nwhole_part = %i", -whole_part);
-    printf("\nfrac_part = %f\n", frac_part);
-    return -whole_part;
+  if (S) {
+    // negative number
+    if (whole_part > 0x80000000) {
+      return 0x80000000;
+    } else {
+      return -whole_part;
+    }
   } else
+    // positive number
   {
-    printf("\nsign is positive");
-    printf("\nwhole_part = %i", whole_part);
-    printf("\nfrac_part = %f\n", frac_part);
-    return whole_part;
+    if (whole_part > 0x7FFFFFFF) {
+      return 0x80000000;
+    } else {
+      return whole_part;
+    }
   }
 }
 
@@ -82,8 +85,8 @@ int float_f2i(float_bits f) {
   int exponent = exponent_u & 0xFFu;
   int E = exponent - bias;
   int mantissa = f.u & ((1u << mantissa_bits) - 1);
-  
-  int reconstructed_bits = (S << (w - 1)) | ((E + bias) << (w - 1 - exponent_bits)) | ((unsigned)mantissa);
+
+  // int reconstructed_bits = (S << (w - 1)) | ((E + bias) << (w - 1 - exponent_bits)) | ((unsigned)mantissa);
   // return reconstructed_bits;
 
   // Check if exponent is negative (rounds to zero) ie. E = exponent_k - bias_k < 0
@@ -91,11 +94,11 @@ int float_f2i(float_bits f) {
     return 0;
 
   // Check overflow, large exponent ie. E = exponent_k - bias_k > 31
-  // why 31? Because 2^31 = 2147483648 (48 off due to error) 
-  // which overflows INT_MAX=2147483647 
+  // why 31? Because 2^31 = 21474836e9 (actual value stored is 2147483648 
+  // there is 48 off due to error) which overflows INT_MAX=2147483647 
   if (E > 31)
-    return INT_MAX;
-  
+    return 0x80000000;
+
   // Denormalized numbers -> all round to zero
   if (0 == exponent) 
   {
@@ -105,23 +108,35 @@ int float_f2i(float_bits f) {
   else if (0xFFu == exponent) 
   {
     if (S == 1) {
-      return INT_MAX;
+      return 0x7FFFFFFF;
     } else {
-      return INT_MIN;
+      return 0x80000000;
     }
   }
   // Exponent within normalized range gets rounded to floor
   else {
     return weighted_digits(f.u, E, S);
-    // return cast_conversion(f.u, E);
   }
 }
 
-int main(void) {
-  float_bits f;
-  scanf("%f", &f.f);
-  print_bits(f.u);
-  // print_bits(float_f2i(f));
-  printf("%i\n", float_f2i(f));
-  return 0;
-}
+
+// int float_f2i(float_bits f) {
+//   unsigned sign = f.u >> 31;
+//   unsigned exp = (f.u >> 23) & 0xFF;
+//   unsigned frac = f.u & 0x7FFFFF;
+//
+//   unsigned val = 0x80000000u + (frac << 8);
+//   if (exp < 127) {
+//     return (int) 0;
+//   }
+//   if (exp > 158) {
+//     return (int) 0x80000000u;
+//   }
+//   val = val >> (158 - exp);
+//
+//   if (sign) {
+//     return val > 0x80000000u ? (int) 0x80000000u : -(int) val;
+//   } else {
+//     return val > 0x7FFFFFFF ? (int) 0x80000000u : (int) val;
+//   }
+// }
