@@ -17,10 +17,7 @@ paring the result to what would be obtained using your machine's floating-point
 operations.
 */
 
-#include "utils.h"
-#include <float.h>
 #include <stdint.h>
-#include <stdio.h>
 
 const int w = sizeof(float) << 3;
 const int exponent_bits = 8;
@@ -63,14 +60,22 @@ int weighted_digits(uint32_t raw_mantissa, int E, int S) {
 
   if (S) {
     // negative number
-    if (whole_part > 0x80000000) {
+    // whole_part lacks sign so far we've treat it as an absolute number
+    // NOTE: When we comparte `whole_part > 0x80000000` C promotion rule 
+    // kicks in! Automatically converts both operands to unsigned because  
+    // 0x80000000 is out of range if treated as int (= -INT_MAX - 1))
+    if (whole_part > 0x80000000) {  
       return 0x80000000;
     } else {
       return -whole_part;
     }
   } else
-    // positive number
   {
+    // positive number
+    // NOTE: Problem statement instructs to always return 0x80000000 on
+    // overflow, regardless of the direction. So even positive overflow
+    // returns 0x80000000 (INT_MIN) not INT_MAX. It's a sentinel value meaning
+    // "this conversion failed", not "here's the closest representable integer"
     if (whole_part > 0x7FFFFFFF) {
       return 0x80000000;
     } else {
@@ -104,11 +109,16 @@ int float_f2i(float_bits f) {
   {
     return 0;
   } 
-  // All ones exponent 0xFF -> Positive (negative) infinity returns TMax (TMin)
+  // All ones exponent 0xFF -> Positive or negative infinity returns TMin
+    // NOTE: Problem statement instructs to always return 0x80000000 on
+    // overflow, regardless of the direction. So even positive overflow
+    // returns 0x80000000 (INT_MIN) not INT_MAX. It's a sentinel value meaning
+    // "this conversion failed", not "here's the closest representable integer"
   else if (0xFFu == exponent) 
   {
     if (S == 1) {
-      return 0x7FFFFFFF;
+      // return 0x7FFFFFFF;
+      return 0x80000000;
     } else {
       return 0x80000000;
     }
