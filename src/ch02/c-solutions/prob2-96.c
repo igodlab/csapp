@@ -128,25 +128,3 @@ int float_f2i(float_bits f) {
     return weighted_digits(f.u, E, S);
   }
 }
-
-
-// int float_f2i(float_bits f) {
-//   unsigned sign = f.u >> 31;
-//   unsigned exp = (f.u >> 23) & 0xFF;
-//   unsigned frac = f.u & 0x7FFFFF;
-//
-//   unsigned val = 0x80000000u + (frac << 8);
-//   if (exp < 127) {
-//     return (int) 0;
-//   }
-//   if (exp > 158) {
-//     return (int) 0x80000000u;
-//   }
-//   val = val >> (158 - exp);
-//
-//   if (sign) {
-//     return val > 0x80000000u ? (int) 0x80000000u : -(int) val;
-//   } else {
-//     return val > 0x7FFFFFFF ? (int) 0x80000000u : (int) val;
-//   }
-// }
