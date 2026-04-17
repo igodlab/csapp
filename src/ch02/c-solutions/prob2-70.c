@@ -13,11 +13,13 @@ Your function should follow the bit-level integer coding rules (page 128).
 
 #include <assert.h>
 
-const unsigned w = sizeof(int) << 3;
+const int w = sizeof(int) << 3;
 
 int fits_bits(int x, int n) {
   assert(n > 0 && "Error: entered bit n must be positive");
   assert(w >= n && "Error: entered bit n cannot be greater than the implementation-defined int size 32-bits");
+
+  if (n == w) return 1;   // every int fits in w bits by definition
 
   // Get two's-comp ranges for n-bits
   int n_tmax = (1 << (n - 1)) - 1;
