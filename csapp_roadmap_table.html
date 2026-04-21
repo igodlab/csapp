@@ -294,6 +294,65 @@
     margin: 8px 0 0;
   }
 
+  .hw-block {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .hw-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .hw-row {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+
+  .hw-tier-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    min-width: 36px;
+  }
+
+  .hw-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .hw-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .hw-t1 {
+    color: #e05c8a;
+    background: rgba(224,92,138,0.09);
+    border: 1px solid rgba(224,92,138,0.25);
+  }
+
+  .hw-t2 {
+    color: var(--critical);
+    background: var(--critical-bg);
+    border: 1px solid var(--critical-border);
+  }
+
   footer {
     margin-top: 40px;
     padding-top: 20px;
@@ -311,17 +370,21 @@
 <header>
   <div class="label">Study Roadmap · CSAPP 3rd Edition</div>
   <h1>Chapter Priority Guide for HPC / CUDA</h1>
-  <div class="subtitle">Filtered for GPU programming, CUDA optimization, and ML workloads</div>
+  <div class="subtitle">Filtered for GPU programming, CUDA optimization, and ML workloads · cross-referenced against PMPP 5th ed.</div>
 </header>
 
 <div class="legend">
   <div class="legend-item"><span class="badge badge-critical">critical</span> Read fully, do selected problems</div>
   <div class="legend-item"><span class="badge badge-skim">skim</span> Read selectively, no problems needed</div>
 </div>
-<div class="legend" style="margin-top:-16px; margin-bottom: 28px;">
+<div class="legend" style="margin-top:-16px; margin-bottom: 6px;">
   <div class="legend-item"><span class="sec-read" style="font-family:var(--mono);font-size:11px;color:var(--critical)">§ green</span>&nbsp; read this section</div>
   <div class="legend-item"><span class="sec-skim-ref" style="font-family:var(--mono);font-size:11px;color:var(--skim)">§ amber</span>&nbsp; skim this section</div>
   <div class="legend-item"><span style="font-family:var(--mono);font-size:11px;color:var(--text-muted);text-decoration:line-through;opacity:0.6">§ gray</span>&nbsp; skip entirely</div>
+</div>
+<div class="legend" style="margin-bottom: 28px;">
+  <div class="legend-item"><span class="hw-pill hw-t1">T1</span>&nbsp; must-do problem</div>
+  <div class="legend-item"><span class="hw-pill hw-t2">T2</span>&nbsp; do if time allows</div>
 </div>
 
 <table>
@@ -363,7 +426,31 @@
       <td>
         <div class="rationale">
           Float precision bugs are the #1 silent killer in ML workloads. <strong>fp16 is what tensor cores operate on</strong> — you need to know its range and where it saturates. Integer overflow in kernel index arithmetic is silent and produces wrong answers, not crashes. Non-associativity directly explains why parallel reductions give different results at different thread counts.
-          <div class="note">Do: 2.59, 2.60, 2.61, 2.63, 2.70, 2.72, 2.82, 2.84, 2.87, 2.89, 2.96</div>
+          <div class="hw-block">
+            <div class="hw-label">Homework — 43 problems · do 11</div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T1 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t1">2.61</span>
+                <span class="hw-pill hw-t1">2.63</span>
+                <span class="hw-pill hw-t1">2.72</span>
+                <span class="hw-pill hw-t1">2.82</span>
+                <span class="hw-pill hw-t1">2.87</span>
+                <span class="hw-pill hw-t1">2.89</span>
+                <span class="hw-pill hw-t1">2.96</span>
+              </div>
+            </div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T2 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t2">2.59</span>
+                <span class="hw-pill hw-t2">2.60</span>
+                <span class="hw-pill hw-t2">2.70</span>
+                <span class="hw-pill hw-t2">2.84</span>
+                <span class="hw-pill hw-t2">2.88</span>
+              </div>
+            </div>
+          </div>
         </div>
       </td>
     </tr>
@@ -456,6 +543,19 @@
       <td>
         <div class="rationale">
           The CPE model is the CPU analog of <strong>CUDA's arithmetic intensity and occupancy model</strong>. Distinguishing latency-bound from throughput-bound code is exactly what you do when reading Nsight profiles. Loop unrolling translates directly — nvcc applies it, and you need to know when to force it. ILP reasoning explains why instruction-level optimizations in kernels matter.
+          <div class="hw-block">
+            <div class="hw-label">Homework — 7 problems · do 5</div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T1 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t1">5.13</span>
+                <span class="hw-pill hw-t1">5.14</span>
+                <span class="hw-pill hw-t1">5.15</span>
+                <span class="hw-pill hw-t1">5.17</span>
+                <span class="hw-pill hw-t1">5.19</span>
+              </div>
+            </div>
+          </div>
         </div>
       </td>
     </tr>
@@ -488,7 +588,28 @@
       <td>
         <div class="rationale">
           <strong>This is the most important chapter in the book for GPU work.</strong> Memory coalescing in CUDA is cache-line awareness applied to GPU DRAM bursts. Shared memory tiling is manual cache management. The memory mountain experiment is the CPU version of the roofline model you'll use constantly. Bank conflicts in shared memory are conflict misses in disguise. Everything in PMPP Ch. 6–9 will make more sense after deeply understanding this chapter.
-          <div class="note">Do: all cache simulation problems, memory mountain analysis</div>
+          <div class="hw-block">
+            <div class="hw-label">Homework — 25 problems · do 9</div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T1 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t1">6.34</span>
+                <span class="hw-pill hw-t1">6.37</span>
+                <span class="hw-pill hw-t1">6.44</span>
+                <span class="hw-pill hw-t1">6.45</span>
+              </div>
+            </div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T2 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t2">6.25</span>
+                <span class="hw-pill hw-t2">6.36</span>
+                <span class="hw-pill hw-t2">6.38</span>
+                <span class="hw-pill hw-t2">6.39</span>
+                <span class="hw-pill hw-t2">6.46</span>
+              </div>
+            </div>
+          </div>
         </div>
       </td>
     </tr>
@@ -518,7 +639,10 @@
       <td>
         <div class="rationale">
           CUDA compilation produces both device and host object files that the linker stitches together. <strong>Understanding symbol resolution explains why nvcc linking fails</strong> in non-obvious ways — multiple definition errors, undefined device symbols, or cubin embedding issues. Also relevant when linking against cuBLAS, cuDNN, or NCCL: knowing the difference between static and dynamic linking lets you reason about binary size, load time, and version conflicts in production ML systems.
-          <div class="note">Light read — one pass, no problems needed</div>
+          <div class="hw-block">
+            <div class="hw-label">Homework</div>
+            <div class="hw-row"><span style="font-family:var(--mono);font-size:11px;color:var(--text-muted);font-style:italic;">No problems needed — concepts suffice</span></div>
+          </div>
         </div>
       </td>
     </tr>
@@ -549,7 +673,10 @@
       <td>
         <div class="rationale">
           The process model underpins how <strong>CUDA driver interactions actually work</strong> — GPU kernels launch asynchronously from a host process, and understanding kernel/user mode explains why certain CUDA API calls are expensive (they cross that boundary). Signal handling matters when building robust GPU training jobs: SIGTERM/SIGINT handling for checkpoint-on-interrupt requires async-signal-safe code. Also relevant for understanding why CUDA context creation is per-process and what happens to GPU state when a process crashes.
-          <div class="note">Light read — focus on sections 8.1–8.3 only</div>
+          <div class="hw-block">
+            <div class="hw-label">Homework</div>
+            <div class="hw-row"><span style="font-family:var(--mono);font-size:11px;color:var(--text-muted);font-style:italic;">No problems needed — concepts suffice</span></div>
+          </div>
         </div>
       </td>
     </tr>
@@ -583,6 +710,10 @@
       <td>
         <div class="rationale">
           Directly explains <strong>CUDA unified memory (cudaMallocManaged)</strong> — page migration between host/device is literal page fault handling across PCIe. Pinned memory (cudaMallocHost) only makes sense if you understand why pageable memory requires an extra copy. PCIe transfer costs map to TLB miss costs. Without this chapter, CUDA memory management feels like magic rules to memorize.
+          <div class="hw-block">
+            <div class="hw-label">Homework</div>
+            <div class="hw-row"><span style="font-family:var(--mono);font-size:11px;color:var(--text-muted);font-style:italic;">No problems needed — allocator lab is out of scope</span></div>
+          </div>
         </div>
       </td>
     </tr>
@@ -615,6 +746,25 @@
       <td>
         <div class="rationale">
           <strong>CUDA atomic operations, __syncthreads(), and memory fences exist for exactly these reasons.</strong> You can't reason about when to use __threadfence() vs __syncthreads() without a solid mental model of race conditions and memory reordering. Reduction patterns, histogram kernels, and any kernel with shared state require this foundation. The GPU just exposes these hazards at a much larger scale — thousands of concurrent threads instead of dozens.
+          <div class="hw-block">
+            <div class="hw-label">Homework — 24 problems · do 6</div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T1 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t1">12.18</span>
+                <span class="hw-pill hw-t1">12.28</span>
+                <span class="hw-pill hw-t1">12.29</span>
+              </div>
+            </div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T2 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t2">12.17</span>
+                <span class="hw-pill hw-t2">12.30</span>
+                <span class="hw-pill hw-t2">12.34</span>
+              </div>
+            </div>
+          </div>
         </div>
       </td>
     </tr>
@@ -624,7 +774,7 @@
 
 <footer>
   <span>CSAPP 3rd ed. · Bryant & O'Hallaron</span>
-  <span>9 chapters · 4 critical · 5 skim</span>
+  <span>9 chapters · 4 critical · 5 skim · 31 curated problems</span>
 </footer>
 
 </body>
