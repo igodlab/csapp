@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSAPP HPC Roadmap v2</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0f11;
+    --surface: #16181c;
+    --border: #272a30;
+    --border-light: #1e2126;
+    --text-primary: #e8eaf0;
+    --text-secondary: #7a808c;
+    --text-muted: #4a5060;
+    --critical: #00d4a0;
+    --critical-bg: rgba(0, 212, 160, 0.08);
+    --critical-border: rgba(0, 212, 160, 0.2);
+    --skim: #f59e3f;
+    --skim-bg: rgba(245, 158, 63, 0.08);
+    --skim-border: rgba(245, 158, 63, 0.2);
+    --changed: #c084fc;
+    --changed-bg: rgba(192, 132, 252, 0.07);
+    --changed-border: rgba(192, 132, 252, 0.22);
+    --accent: #5b8af5;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--sans);
+    font-weight: 300;
+    padding: 48px 40px;
+    min-height: 100vh;
+  }
+
+  header {
+    margin-bottom: 40px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 300;
+  }
+
+  /* ── changelog strip ── */
+  .changelog {
+    margin-bottom: 32px;
+    padding: 16px 20px;
+    background: var(--changed-bg);
+    border: 1px solid var(--changed-border);
+    border-radius: 4px;
+  }
+
+  .changelog-title {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--changed);
+    margin-bottom: 10px;
+  }
+
+  .changelog-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .cl-item {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  .cl-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .cl-add    { color: var(--critical);  background: var(--critical-bg);  border: 1px solid var(--critical-border); }
+  .cl-change { color: var(--changed);   background: var(--changed-bg);   border: 1px solid var(--changed-border); }
+  .cl-drop   { color: #f87171;          background: rgba(248,113,113,.07); border: 1px solid rgba(248,113,113,.22); }
+  .cl-note   { color: var(--skim);      background: var(--skim-bg);      border: 1px solid var(--skim-border); }
+
+  .cl-item strong { color: var(--text-primary); font-weight: 500; }
+
+  /* ── legend ── */
+  .legend {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: var(--mono);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge-critical { color: var(--critical); background: var(--critical-bg); border: 1px solid var(--critical-border); }
+  .badge-skim     { color: var(--skim);     background: var(--skim-bg);     border: 1px solid var(--skim-border); }
+  .badge-changed  { color: var(--changed);  background: var(--changed-bg);  border: 1px solid var(--changed-border); }
+
+  /* ── table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  thead tr { border-bottom: 1px solid var(--border); }
+
+  th {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    text-align: left;
+    padding: 0 16px 14px 0;
+  }
+
+  th:first-child { padding-left: 0; width: 118px; }
+  th:nth-child(2) { width: 100px; }
+  th:nth-child(3) { width: 38%; }
+  th:last-child { }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: top;
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  tbody tr:last-child { border-bottom: none; }
+
+  td {
+    padding: 18px 16px 18px 0;
+    color: var(--text-primary);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  td:first-child {
+    padding-left: 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .ch-num   { font-size: 11px; color: var(--text-muted); font-weight: 400; margin-bottom: 2px; }
+  .ch-title { font-size: 12px; color: var(--text-primary); font-weight: 600; }
+
+  /* delta pill beside chapter title */
+  .ch-delta {
+    display: inline-block;
+    margin-top: 5px;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 1px 6px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .delta-changed { color: var(--changed); background: var(--changed-bg); border: 1px solid var(--changed-border); }
+  .delta-add     { color: var(--critical); background: var(--critical-bg); border: 1px solid var(--critical-border); }
+  .delta-drop    { color: #f87171; background: rgba(248,113,113,.07); border: 1px solid rgba(248,113,113,.22); }
+
+  /* sections */
+  .sections { margin-top: 10px; display: flex; flex-direction: column; gap: 3px; }
+
+  .sections-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .sec-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .sec-ref   { font-family: var(--mono); font-size: 11px; white-space: nowrap; flex-shrink: 0; }
+  .sec-read  { color: var(--critical); }
+  .sec-skim  { color: var(--skim); }
+  .sec-skip  { color: var(--text-muted); text-decoration: line-through; opacity: 0.5; }
+  .sec-new   { color: var(--changed); }
+
+  .sec-desc  { color: var(--text-secondary); font-size: 12px; }
+
+  /* inline delta note */
+  .inline-delta {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    padding: 1px 5px;
+    border-radius: 2px;
+    margin-left: 4px;
+    vertical-align: middle;
+    color: var(--changed);
+    background: var(--changed-bg);
+    border: 1px solid var(--changed-border);
+    text-transform: uppercase;
+  }
+
+  .inline-add {
+    color: var(--critical);
+    background: var(--critical-bg);
+    border: 1px solid var(--critical-border);
+  }
+
+  /* topics */
+  .topics { display: flex; flex-direction: column; gap: 4px; }
+
+  .topic {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .topic::before {
+    content: '—';
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .topic strong { color: var(--text-primary); font-weight: 500; }
+
+  /* rationale */
+  .rationale {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  .rationale strong { color: var(--text-primary); font-weight: 500; }
+
+  /* critique callout */
+  .critique {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--changed-bg);
+    border-left: 2px solid var(--changed);
+    border-radius: 0 3px 3px 0;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .critique-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--changed);
+    margin-bottom: 4px;
+  }
+
+  .critique strong { color: var(--text-primary); font-weight: 500; }
+
+  /* hw block */
+  .hw-block {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .hw-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .hw-row {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+
+  .hw-tier-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    min-width: 36px;
+  }
+
+  .hw-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+
+  .hw-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .hw-t1 { color: #e05c8a; background: rgba(224,92,138,0.09); border: 1px solid rgba(224,92,138,0.25); }
+  .hw-t2 { color: var(--critical); background: var(--critical-bg); border: 1px solid var(--critical-border); }
+  .hw-new { color: var(--changed); background: var(--changed-bg); border: 1px solid var(--changed-border); }
+
+  /* supplements section */
+  .supplements {
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .supp-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .supp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+
+  .supp-card {
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  .supp-card.priority { border-color: var(--critical-border); background: var(--critical-bg); }
+
+  .supp-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .supp-when {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .supp-when.high { color: var(--critical); }
+  .supp-when.med  { color: var(--skim); }
+  .supp-when.low  { color: var(--text-muted); }
+
+  .supp-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="label">Study Roadmap v2 · CSAPP 3rd Edition · revised after critique</div>
+  <h1>Chapter Priority Guide for HPC / CUDA</h1>
+  <div class="subtitle">Filtered for GPU programming, CUDA optimization, and ML workloads · cross-referenced against PMPP 5th ed.</div>
+</header>
+
+<!-- ── CHANGELOG ── -->
+<div class="changelog">
+  <div class="changelog-title">v2 Changes from critique</div>
+  <div class="changelog-items">
+    <div class="cl-item"><span class="cl-tag cl-change">changed</span> <span><strong>Ch. 12 downgraded</strong> from CRITICAL → SKIM. POSIX thread API has no GPU analog; retained sections cover race conditions and memory model only.</span></div>
+    <div class="cl-item"><span class="cl-tag cl-add">added</span> <span><strong>Ch. 9 problems added</strong> (9.11, 9.14, 9.17 — all T1). Previously marked critical with zero problems, which was an error.</span></div>
+    <div class="cl-item"><span class="cl-tag cl-add">added</span> <span><strong>§3.9.3</strong> (Data Alignment) added to Ch. 3 skim — direct dependency for bank conflict analysis in PMPP 6.4 / 15.6.</span></div>
+    <div class="cl-item"><span class="cl-tag cl-add">added</span> <span><strong>§4.5.8</strong> (Pipeline Control Logic) added to Ch. 4 skim — 4-page section that frames why warp switching solves the stall problem (PMPP 4.6).</span></div>
+    <div class="cl-item"><span class="cl-tag cl-add">added</span> <span><strong>§7.12</strong> (Position-Independent Code) added to Ch. 7 skim — completes the runtime linking model needed to understand CUDA kernel loading.</span></div>
+    <div class="cl-item"><span class="cl-tag cl-change">changed</span> <span><strong>Ch. 2: 2.90 promoted to T1</strong>. Tests "why does this expression lose precision?" — directly needed for mixed-precision training stability reasoning.</span></div>
+    <div class="cl-item"><span class="cl-tag cl-change">changed</span> <span><strong>Ch. 5: 5.13 and 5.14 demoted to T2.</strong> CPE counting for x86 instruction sequences doesn't transfer to GPU bottleneck analysis; 5.15/5.17/5.19 kept T1.</span></div>
+    <div class="cl-item"><span class="cl-tag cl-add">added</span> <span><strong>Ch. 6: 6.29 and 6.33 added as T1</strong>, 6.34 demoted to T2. Cache miss analysis for stride patterns (6.29) and loop order / matrix traversal (6.33) map directly to coalescing analysis in PMPP 5–6.</span></div>
+    <div class="cl-item"><span class="cl-tag cl-drop">dropped</span> <span><strong>Ch. 12: 12.34 dropped.</strong> Deadlock avoidance is peripheral to GPU programming. 12.28 and 12.29 retained as highest-value problems in the set.</span></div>
+    <div class="cl-item"><span class="cl-tag cl-note">sequence</span> <span><strong>Sequencing clarified:</strong> complete CSAPP Ch. 9 before PMPP Ch. 5 (not concurrently). PMPP Ch. 2–4 can begin after CSAPP Ch. 2 + 6.</span></div>
+  </div>
+</div>
+
+<!-- ── LEGEND ── -->
+<div class="legend">
+  <div class="legend-item"><span class="badge badge-critical">critical</span> Read fully, do selected problems</div>
+  <div class="legend-item"><span class="badge badge-skim">skim</span> Read selectively, no problems needed</div>
+  <div class="legend-item"><span class="badge badge-changed">changed</span> Modified from v1</div>
+</div>
+<div class="legend" style="margin-bottom:6px;">
+  <div class="legend-item"><span class="sec-ref sec-read">§ green</span>&nbsp;read this section</div>
+  <div class="legend-item"><span class="sec-ref sec-skim">§ amber</span>&nbsp;skim this section</div>
+  <div class="legend-item"><span class="sec-ref sec-new">§ purple</span>&nbsp;newly added in v2</div>
+  <div class="legend-item"><span class="sec-ref sec-skip">§ gray</span>&nbsp;skip entirely</div>
+</div>
+<div class="legend" style="margin-bottom:28px;">
+  <div class="legend-item"><span class="hw-pill hw-t1">T1</span>&nbsp;must-do problem</div>
+  <div class="legend-item"><span class="hw-pill hw-t2">T2</span>&nbsp;do if time allows</div>
+  <div class="legend-item"><span class="hw-pill hw-new">new</span>&nbsp;added in v2</div>
+</div>
+
+<!-- ── SEQUENCING NOTE ── -->
+<div style="margin-bottom:28px; padding:14px 16px; background:rgba(91,138,245,0.06); border:1px solid rgba(91,138,245,0.2); border-radius:4px;">
+  <div style="font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:0.13em;text-transform:uppercase;color:#5b8af5;margin-bottom:8px;">Recommended sequence</div>
+  <div style="font-size:12.5px;color:var(--text-secondary);display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+    <span style="font-family:var(--mono);font-size:11px;color:var(--text-primary);">CSAPP Ch. 2 + 6</span>
+    <span style="color:var(--text-muted);">→</span>
+    <span style="font-family:var(--mono);font-size:11px;color:#5b8af5;">start PMPP Ch. 2–4</span>
+    <span style="color:var(--text-muted);">→</span>
+    <span style="font-family:var(--mono);font-size:11px;color:var(--text-primary);">CSAPP Ch. 9</span>
+    <span style="color:var(--text-muted);">→</span>
+    <span style="font-family:var(--mono);font-size:11px;color:#5b8af5;">continue PMPP Ch. 5+</span>
+    <span style="color:var(--text-muted);">·</span>
+    <span style="color:var(--text-secondary);">Ch. 3 skim before PMPP Ch. 6 · Ch. 12 skim before PMPP Ch. 9</span>
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Chapter</th>
+      <th>Focus</th>
+      <th>Essential topics</th>
+      <th>Rationale for HPC / GPU</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <!-- ── Ch. 2 ── -->
+    <tr>
+      <td>
+        <div class="ch-num">Ch. 2</div>
+        <div class="ch-title">Data Representation</div>
+        <div class="ch-delta delta-changed">v2 changes</div>
+      </td>
+      <td><span class="badge badge-critical">critical</span></td>
+      <td>
+        <div class="topics">
+          <div class="topic"><strong>Two's complement</strong> and integer overflow behavior</div>
+          <div class="topic"><strong>Unsigned vs signed</strong> arithmetic and implicit conversion traps</div>
+          <div class="topic"><strong>IEEE 754</strong> — normalized, denormalized, NaN, ±Inf, ±0</div>
+          <div class="topic"><strong>fp16 / half precision</strong> layout (2.87)</div>
+          <div class="topic"><strong>Float non-associativity</strong> and rounding modes</div>
+          <div class="topic"><strong>Floating-point precision loss</strong> in expressions (2.90)</div>
+          <div class="topic"><strong>Bit manipulation</strong> — masks, shifts, branchless idioms</div>
+        </div>
+        <div class="sections">
+          <div class="sections-label">Read all — section guide</div>
+          <div class="sec-row"><span class="sec-ref sec-read">2.1.6–2.1.9</span><span class="sec-desc">Boolean algebra, bit ops, shift ops in C</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">2.2.2–2.2.5</span><span class="sec-desc">Unsigned / two's-complement encodings, signed vs unsigned in C</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">2.3.1–2.3.3</span><span class="sec-desc">Unsigned + two's-complement addition, overflow, negation</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">2.4.1–2.4.6</span><span class="sec-desc">Full floating point — fractional binary, IEEE 754, rounding, FP in C</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">2.2.6–2.2.7</span><span class="sec-desc">Bit expansion / truncation — low payoff</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">2.3.4–2.3.7</span><span class="sec-desc">Multiply / divide by shifts — compiler handles this</span></div>
+        </div>
+      </td>
+      <td>
+        <div class="rationale">
+          Float precision bugs are the #1 silent killer in ML workloads. <strong>fp16 is what tensor cores operate on</strong> — you need to know its range and where it saturates. Non-associativity directly explains why parallel reductions give different results at different thread counts. Problem 2.90 (new) trains the "why does this expression lose precision?" reasoning required for mixed-precision training stability.
+          <div class="hw-block">
+            <div class="hw-label">Homework — 43 problems · do 12 (v1: 11)</div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T1 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t1">2.61</span>
+                <span class="hw-pill hw-t1">2.63</span>
+                <span class="hw-pill hw-t1">2.72</span>
+                <span class="hw-pill hw-t1">2.82</span>
+                <span class="hw-pill hw-t1">2.87</span>
+                <span class="hw-pill hw-t1">2.89</span>
+                <span class="hw-pill hw-t1">2.96</span>
+                <span class="hw-pill hw-new">2.90 ↑</span>
+              </div>
+            </div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T2 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t2">2.59</span>
+                <span class="hw-pill hw-t2">2.60</span>
+                <span class="hw-pill hw-t2">2.70</span>
+                <span class="hw-pill hw-t2">2.84</span>
+                <span class="hw-pill hw-t2">2.88</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <!-- ── Ch. 3 ── -->
+    <tr>
+      <td>
+        <div class="ch-num">Ch. 3</div>
+        <div class="ch-title">Machine-Level Code</div>
+        <div class="ch-delta delta-changed">v2 changes</div>
+      </td>
+      <td><span class="badge badge-skim">skim</span></td>
+      <td>
+        <div class="topics">
+          <div class="topic"><strong>Register model</strong> — how values live in registers vs memory</div>
+          <div class="topic"><strong>Stack frames</strong> and calling conventions</div>
+          <div class="topic"><strong>Condition codes</strong> and predicated execution</div>
+          <div class="topic"><strong>Loop-to-branch</strong> compiler translation patterns</div>
+          <div class="topic"><strong>Data alignment</strong> — struct padding, byte offset arithmetic <span class="inline-delta inline-add">new</span></div>
+        </div>
+        <div class="sections">
+          <div class="sections-label">Read selectively</div>
+          <div class="sec-row"><span class="sec-ref sec-skim">3.2.1–3.2.2</span><span class="sec-desc">Machine-level code overview, code examples — get the mental model</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">3.4.1–3.4.2</span><span class="sec-desc">Operand specifiers, data movement — registers vs memory</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">3.6.1–3.6.2</span><span class="sec-desc">Condition codes — maps to PTX predicate registers</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">3.6.5–3.6.7</span><span class="sec-desc">Conditional branches, conditional moves, loops — compiler patterns</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">3.7.1–3.7.3</span><span class="sec-desc">Runtime stack, control transfer, data transfer — calling conventions</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">3.11.1–3.11.7</span><span class="sec-desc">Floating-point code in assembly — useful for reading compiler output</span></div>
+          <div class="sec-row"><span class="sec-ref sec-new">3.9.3 ↑</span><span class="sec-desc">Data alignment — struct padding, compiler-inserted bytes; needed for PMPP bank conflict analysis</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">3.3, 3.5</span><span class="sec-desc">Data formats, arithmetic ops — x86 encoding detail, skip</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">3.8, 3.9.1–3.9.2</span><span class="sec-desc">Arrays, structs/unions (not alignment) — low GPU payoff</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">3.10.3–3.10.4</span><span class="sec-desc">Buffer overflow / ASLR — security focus, skip</span></div>
+        </div>
+        <div class="critique">
+          <div class="critique-label">Why §3.9.3 was added</div>
+          Bank conflicts in shared memory (PMPP 6.4, 15.6) arise when threads access addresses that map to the same bank. The address arithmetic depends on struct size and alignment — exactly what §3.9.3 teaches. Without it, you're memorizing bank conflict rules rather than deriving them.
+        </div>
+      </td>
+      <td>
+        <div class="rationale">
+          <strong>PTX mirrors this mental model exactly</strong> — virtual registers, predicate registers instead of branches, explicit memory addressing. Needed to understand register pressure warnings in Nsight Compute and why register spilling hurts occupancy. §3.9.3 now also provides the struct layout reasoning required for shared memory optimization.
+        </div>
+      </td>
+    </tr>
+
+    <!-- ── Ch. 4 ── -->
+    <tr>
+      <td>
+        <div class="ch-num">Ch. 4</div>
+        <div class="ch-title">Processor Architecture</div>
+        <div class="ch-delta delta-changed">v2 changes</div>
+      </td>
+      <td><span class="badge badge-skim">skim</span></td>
+      <td>
+        <div class="topics">
+          <div class="topic"><strong>Pipelining</strong> — stages, throughput vs latency</div>
+          <div class="topic"><strong>Data and control hazards</strong></div>
+          <div class="topic"><strong>Stall resolution</strong> — forwarding and stall insertion logic <span class="inline-delta">new</span></div>
+        </div>
+        <div class="sections">
+          <div class="sections-label">Read selectively</div>
+          <div class="sec-row"><span class="sec-ref sec-skim">4.4.1–4.4.3</span><span class="sec-desc">General pipelining principles, throughput vs latency, limitations</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">4.5.5</span><span class="sec-desc">Pipeline hazards — data / control hazards, stalls, forwarding</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">4.5.9</span><span class="sec-desc">Performance analysis — CPI reasoning, maps to GPU occupancy</span></div>
+          <div class="sec-row"><span class="sec-ref sec-new">4.5.8 ↑</span><span class="sec-desc">Pipeline control logic — how hardware resolves stalls; frames why warp switching is the GPU answer</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">4.1–4.3</span><span class="sec-desc">Full Y86-64 ISA + sequential implementation — toy architecture, skip</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">4.2.1–4.2.5</span><span class="sec-desc">Logic design / HCL — digital circuits, skip</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">4.5.1–4.5.4, 4.5.7</span><span class="sec-desc">PIPE implementation details — microarchitecture busywork</span></div>
+        </div>
+        <div class="critique">
+          <div class="critique-label">Why §4.5.8 was added</div>
+          §4.5.5 covers hazards; §4.5.8 covers the hardware that resolves them. The GPU answer to pipeline stalls is warp switching — but "the GPU avoids stalls by switching warps" is a slogan until you understand <em>what problem</em> it's solving. §4.5.8 is four pages and provides that frame before PMPP 4.6.
+        </div>
+      </td>
+      <td>
+        <div class="rationale">
+          GPU SMs are deeply pipelined. <strong>Latency hiding via warp switching is the GPU answer to pipeline hazards</strong> — you need the CPU pipeline model first to appreciate why the GPU solution works. §4.5.8 (new) provides the stall-resolution context that makes PMPP 4.6 mechanistically clear, not just descriptively true.
+        </div>
+      </td>
+    </tr>
+
+    <!-- ── Ch. 5 ── -->
+    <tr>
+      <td>
+        <div class="ch-num">Ch. 5</div>
+        <div class="ch-title">Optimizing Performance</div>
+        <div class="ch-delta delta-changed">v2 changes</div>
+      </td>
+      <td><span class="badge badge-critical">critical</span></td>
+      <td>
+        <div class="topics">
+          <div class="topic"><strong>CPE model</strong> — measuring bottlenecks, latency vs throughput bound</div>
+          <div class="topic"><strong>Loop unrolling</strong> and ILP — directly maps to nvcc loop unrolling</div>
+          <div class="topic"><strong>Critical path analysis</strong> — bottleneck identification</div>
+          <div class="topic"><strong>Reassociation transforms</strong> — explains non-associative reduction results</div>
+        </div>
+        <div class="sections">
+          <div class="sections-label">Read all — section guide</div>
+          <div class="sec-row"><span class="sec-ref sec-read">5.1–5.3</span><span class="sec-desc">Compiler limitations, CPE metric, program example</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">5.4–5.6</span><span class="sec-desc">Loop inefficiencies, procedure call overhead, memory references</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">5.7.1–5.7.3</span><span class="sec-desc">Modern processor model, functional unit performance, abstract processor model</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">5.8–5.9</span><span class="sec-desc">Loop unrolling, multiple accumulators, reassociation — core ILP content</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">5.11.1–5.11.2</span><span class="sec-desc">Register spilling, branch misprediction — directly relevant to GPU register pressure</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">5.14.1–5.14.2</span><span class="sec-desc">gprof profiling — use Nsight Compute instead</span></div>
+        </div>
+        <div class="critique">
+          <div class="critique-label">T1/T2 rebalancing</div>
+          5.13 and 5.14 demoted to T2: they test CPE counting for specific x86 instruction sequences — a skill that doesn't transfer to GPU bottleneck analysis, where the framework is arithmetic intensity and bandwidth (roofline), not CPE. 5.15, 5.17, 5.19 retained as T1 because they train loop transformation and bottleneck identification, which do transfer.
+        </div>
+      </td>
+      <td>
+        <div class="rationale">
+          The CPE model is the CPU analog of <strong>CUDA's arithmetic intensity and occupancy model</strong>. Distinguishing latency-bound from throughput-bound code is exactly what you do when reading Nsight profiles. Loop unrolling and ILP reasoning explains why instruction-level optimizations in kernels matter even when the bottleneck appears to be memory.
+          <div class="hw-block">
+            <div class="hw-label">Homework — 7 problems · do 5 (tier rebalanced)</div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T1 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t1">5.15</span>
+                <span class="hw-pill hw-t1">5.17</span>
+                <span class="hw-pill hw-t1">5.19</span>
+              </div>
+            </div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T2 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t2">5.13 ↓</span>
+                <span class="hw-pill hw-t2">5.14 ↓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <!-- ── Ch. 6 ── -->
+    <tr>
+      <td>
+        <div class="ch-num">Ch. 6</div>
+        <div class="ch-title">Memory Hierarchy</div>
+        <div class="ch-delta delta-changed">v2 changes</div>
+      </td>
+      <td><span class="badge badge-critical">critical</span></td>
+      <td>
+        <div class="topics">
+          <div class="topic"><strong>Cache geometry</strong> — sets, lines, associativity, block size</div>
+          <div class="topic"><strong>Spatial and temporal locality</strong></div>
+          <div class="topic"><strong>Stride-pattern miss analysis</strong> — nested loops, access patterns <span class="inline-delta inline-add">new</span></div>
+          <div class="topic"><strong>Matrix traversal order</strong> and cache performance <span class="inline-delta inline-add">new</span></div>
+          <div class="topic"><strong>Memory mountain</strong> — bandwidth vs stride</div>
+          <div class="topic"><strong>Cache-friendly access patterns</strong> — matrix layout, tiling</div>
+        </div>
+        <div class="sections">
+          <div class="sections-label">Read all — section guide</div>
+          <div class="sec-row"><span class="sec-ref sec-read">6.2.1–6.2.3</span><span class="sec-desc">Locality of data and instruction references</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">6.4.1–6.4.5</span><span class="sec-desc">Cache organization, direct-mapped, set associative, write policy</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">6.4.7</span><span class="sec-desc">Performance impact of cache parameters</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">6.5</span><span class="sec-desc">Writing cache-friendly code — the practical payoff section</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">6.6.1–6.6.3</span><span class="sec-desc">Memory mountain, rearranging loops for locality, tiling</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">6.1.1–6.1.4</span><span class="sec-desc">Storage technology (RAM/disk/SSD) — hardware survey, low payoff</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">6.4.6</span><span class="sec-desc">Real cache hierarchy anatomy — informational, not actionable</span></div>
+        </div>
+        <div class="critique">
+          <div class="critique-label">Problem rebalancing</div>
+          6.29 and 6.33 added as T1: 6.29 tests cache miss analysis for nested loops with specific stride patterns — the analytical skill needed to evaluate memory coalescing in PMPP 5–6. 6.33 tests matrix traversal order and its effect on cache performance — a direct analog to PMPP's row-major vs column-major discussion in tiled matmul. 6.34 demoted to T2 (mechanical cache geometry calculation, lower transfer value).
+        </div>
+      </td>
+      <td>
+        <div class="rationale">
+          <strong>The most important CSAPP chapter for GPU work.</strong> Memory coalescing is cache-line awareness applied to GPU DRAM bursts. Shared memory tiling is manual cache management. The memory mountain is the CPU roofline. Bank conflicts are conflict misses in disguise. Everything in PMPP Ch. 5–9 will make more sense after deeply understanding this chapter.
+          <div class="hw-block">
+            <div class="hw-label">Homework — 25 problems · do 11 (v1: 9)</div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T1 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-new">6.29 ↑</span>
+                <span class="hw-pill hw-new">6.33 ↑</span>
+                <span class="hw-pill hw-t1">6.37</span>
+                <span class="hw-pill hw-t1">6.44</span>
+                <span class="hw-pill hw-t1">6.45</span>
+              </div>
+            </div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T2 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t2">6.25</span>
+                <span class="hw-pill hw-t2">6.34 ↓</span>
+                <span class="hw-pill hw-t2">6.36</span>
+                <span class="hw-pill hw-t2">6.38</span>
+                <span class="hw-pill hw-t2">6.39</span>
+                <span class="hw-pill hw-t2">6.46</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <!-- ── Ch. 7 ── -->
+    <tr>
+      <td>
+        <div class="ch-num">Ch. 7</div>
+        <div class="ch-title">Linking</div>
+        <div class="ch-delta delta-changed">v2 changes</div>
+      </td>
+      <td><span class="badge badge-skim">skim</span></td>
+      <td>
+        <div class="topics">
+          <div class="topic"><strong>Object files</strong> — relocatable, executable, shared</div>
+          <div class="topic"><strong>Symbol resolution</strong> — strong vs weak, extern</div>
+          <div class="topic"><strong>Static vs dynamic linking</strong></div>
+          <div class="topic"><strong>Shared library loading</strong> — load-time vs run-time</div>
+          <div class="topic"><strong>Position-independent code</strong> — runtime linking mechanism <span class="inline-delta inline-add">new</span></div>
+        </div>
+        <div class="sections">
+          <div class="sections-label">Read selectively</div>
+          <div class="sec-row"><span class="sec-ref sec-skim">7.1–7.3</span><span class="sec-desc">Compiler drivers, static linking, object file types</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">7.5–7.6.2</span><span class="sec-desc">Symbol tables, symbol resolution, static libraries</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">7.10–7.11</span><span class="sec-desc">Dynamic linking, runtime loading — .so / cuBLAS / cuDNN model</span></div>
+          <div class="sec-row"><span class="sec-ref sec-new">7.12 ↑</span><span class="sec-desc">Position-independent code — the mechanism that makes runtime kernel linking possible</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">7.7–7.8</span><span class="sec-desc">Relocation mechanics, ELF format detail — too low-level</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">7.13</span><span class="sec-desc">Library interpositioning — not relevant</span></div>
+        </div>
+        <div class="critique">
+          <div class="critique-label">Why §7.12 was added</div>
+          7.10–7.11 (included in v1) cover dynamic linking but leave PIC unexplained — which makes the runtime linking model incomplete. PIC is the mechanism that allows CUDA kernels to be loaded at arbitrary device addresses. Omitting it while including 7.10–7.11 was an inconsistency.
+        </div>
+      </td>
+      <td>
+        <div class="rationale">
+          CUDA compilation produces device + host object files the linker stitches together. <strong>Symbol resolution explains non-obvious nvcc linking failures.</strong> PIC (new) completes the model: CUDA kernels are position-independent code loaded into the device's virtual address space at runtime, which is exactly the mechanism §7.12 describes.
+        </div>
+      </td>
+    </tr>
+
+    <!-- ── Ch. 8 ── -->
+    <tr>
+      <td>
+        <div class="ch-num">Ch. 8</div>
+        <div class="ch-title">Exceptional Control Flow</div>
+      </td>
+      <td><span class="badge badge-skim">skim</span></td>
+      <td>
+        <div class="topics">
+          <div class="topic"><strong>Process model</strong> — context switches, kernel vs user mode</div>
+          <div class="topic"><strong>Signals</strong> — delivery, handlers, async-signal safety</div>
+        </div>
+        <div class="sections">
+          <div class="sections-label">Read selectively — unchanged from v1</div>
+          <div class="sec-row"><span class="sec-ref sec-skim">8.1.1–8.1.2</span><span class="sec-desc">Exception handling, classes of exceptions</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">8.2.1–8.2.5</span><span class="sec-desc">Logical control flow, concurrent flows, user/kernel modes, context switches</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">8.5.1–8.5.3</span><span class="sec-desc">Signal terminology, sending, receiving</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">8.5.5</span><span class="sec-desc">Writing signal handlers — async-signal-safe, needed for checkpoint-on-SIGTERM</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">8.4.1–8.4.6</span><span class="sec-desc">Full process control (fork/exec/wait) — not GPU-relevant</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">8.5.6–8.5.7</span><span class="sec-desc">Synchronizing flows, waiting for signals — too deep into Unix plumbing</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">8.6</span><span class="sec-desc">Nonlocal jumps (setjmp/longjmp) — skip entirely</span></div>
+        </div>
+      </td>
+      <td>
+        <div class="rationale">
+          The process model explains <strong>why certain CUDA API calls are expensive</strong> (they cross the user/kernel boundary). Signal handling matters for SIGTERM/SIGINT checkpoint-on-interrupt in GPU training jobs. No changes from v1.
+        </div>
+      </td>
+    </tr>
+
+    <!-- ── Ch. 9 ── -->
+    <tr>
+      <td>
+        <div class="ch-num">Ch. 9</div>
+        <div class="ch-title">Virtual Memory</div>
+        <div class="ch-delta delta-add">problems added</div>
+      </td>
+      <td><span class="badge badge-critical">critical</span></td>
+      <td>
+        <div class="topics">
+          <div class="topic"><strong>Address spaces</strong> — virtual vs physical, page tables</div>
+          <div class="topic"><strong>Page faults</strong> and TLB operation</div>
+          <div class="topic"><strong>Memory mapping</strong> — mmap, shared mappings</div>
+          <div class="topic"><strong>Allocator goals</strong> — fragmentation model (not implementation)</div>
+        </div>
+        <div class="sections">
+          <div class="sections-label">Read all — section guide</div>
+          <div class="sec-row"><span class="sec-ref sec-read">9.1–9.2</span><span class="sec-desc">Physical vs virtual addressing, address spaces</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">9.3.1–9.3.6</span><span class="sec-desc">DRAM cache, page tables, page hits, page faults, allocation</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">9.4–9.5</span><span class="sec-desc">VM as memory management and protection tool</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">9.6.2–9.6.3</span><span class="sec-desc">TLB operation, multi-level page tables</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">9.8.1, 9.8.4</span><span class="sec-desc">Shared objects, mmap — basis for pinned/unified memory</span></div>
+          <div class="sec-row"><span class="sec-ref sec-read">9.9.1–9.9.5</span><span class="sec-desc">malloc/free, allocator goals, fragmentation — heap model only</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">9.6.4, 9.7</span><span class="sec-desc">End-to-end translation walkthrough, Intel Core i7 case study — too x86-specific</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">9.9.6–9.9.14</span><span class="sec-desc">Allocator implementation (free lists, boundary tags) — out of scope</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">9.10–9.11</span><span class="sec-desc">Garbage collection, memory bugs — not relevant</span></div>
+        </div>
+        <div class="critique">
+          <div class="critique-label">Error corrected from v1</div>
+          Ch. 9 was marked CRITICAL in v1 but had zero problems assigned — an inconsistency. Three problems added, all T1. Allocator implementation problems (the malloc lab) remain out of scope as confirmed.
+        </div>
+      </td>
+      <td>
+        <div class="rationale">
+          Directly explains <strong>CUDA unified memory</strong> — page migration between host/device is literal page fault handling across PCIe. Pinned memory only makes sense if you understand why pageable memory requires an extra copy. Without this chapter, CUDA memory management is memorized rules. Must complete before starting PMPP Ch. 5.
+          <div class="hw-block">
+            <div class="hw-label">Homework — 3 problems added (v1: 0)</div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T1 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-new">9.11 ↑</span>
+                <span class="hw-pill hw-new">9.14 ↑</span>
+                <span class="hw-pill hw-new">9.17 ↑</span>
+              </div>
+            </div>
+            <div class="hw-row">
+              <span style="font-family:var(--mono);font-size:11px;color:var(--text-muted);font-style:italic;">Address translation and TLB reasoning only · allocator lab out of scope</span>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <!-- ── Ch. 12 ── -->
+    <tr>
+      <td>
+        <div class="ch-num">Ch. 12</div>
+        <div class="ch-title">Concurrent Programming</div>
+        <div class="ch-delta delta-drop">downgraded</div>
+      </td>
+      <td>
+        <span class="badge badge-skim">skim</span>
+        <div style="margin-top:6px;font-family:var(--mono);font-size:9px;color:#f87171;letter-spacing:0.08em;">was: critical</div>
+      </td>
+      <td>
+        <div class="topics">
+          <div class="topic"><strong>Race conditions</strong> and data hazards — conceptual only</div>
+          <div class="topic"><strong>Threads memory model</strong> — shared variables, visibility</div>
+          <div class="topic"><strong>Mutual exclusion</strong> — locks, atomics reasoning</div>
+          <div class="topic"><strong>Races and deadlocks</strong> — the failure modes you'll hit in CUDA</div>
+        </div>
+        <div class="sections">
+          <div class="sections-label">Read selectively — reduced from v1</div>
+          <div class="sec-row"><span class="sec-ref sec-skim">12.3.1</span><span class="sec-desc">Thread execution model — conceptual foundation</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">12.4.1–12.4.3</span><span class="sec-desc">Threads memory model, variable mapping, shared variables</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">12.5.2–12.5.3</span><span class="sec-desc">Semaphores, mutual exclusion — basis for atomics reasoning</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skim">12.7.4</span><span class="sec-desc">Races — the failure mode you'll hit in CUDA kernels</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">12.1–12.2</span><span class="sec-desc">Process-based concurrency, I/O multiplexing — Unix server patterns, skip</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">12.3.2–12.3.8</span><span class="sec-desc">pthreads API specifics — no CUDA analog, skip</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">12.5.1, 12.5.4–12.5.5</span><span class="sec-desc">Progress graphs, semaphore scheduling, prethreading — Unix-specific</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">12.6</span><span class="sec-desc">Using threads for parallelism — POSIX speedup examples don't transfer</span></div>
+          <div class="sec-row"><span class="sec-ref sec-skip">12.7.5</span><span class="sec-desc">Deadlocks — peripheral to GPU; dropped from problems too</span></div>
+        </div>
+        <div class="critique">
+          <div class="critique-label">Why this was downgraded from CRITICAL</div>
+          The CUDA synchronization model (__syncthreads, __threadfence, warp-level primitives, C++ atomics with scope/ordering) has no POSIX analog. CSAPP Ch. 12 teaches pthread_create, mutex, condition variables — machinery that doesn't exist in CUDA. The <em>concepts</em> (race conditions, memory visibility, mutual exclusion) transfer; the <em>API</em> does not. The retained sections cover exactly the transferable concepts. PMPP Ch. 9–11 covers the GPU-native synchronization model far more directly.
+        </div>
+      </td>
+      <td>
+        <div class="rationale">
+          <strong>Concepts transfer; API does not.</strong> You need to understand race conditions and memory visibility before reasoning about atomic operations in PMPP Ch. 9 (histogram) and barriers in PMPP Ch. 10–11 (reduction/scan). But the specific POSIX machinery is dead weight. Skim the conceptual sections; skip the pthread implementation sections entirely.
+          <div class="hw-block">
+            <div class="hw-label">Homework — 24 problems · do 2 (v1: 6)</div>
+            <div class="hw-row">
+              <span class="hw-tier-label">T1 ·</span>
+              <div class="hw-pills">
+                <span class="hw-pill hw-t1">12.28</span>
+                <span class="hw-pill hw-t1">12.29</span>
+              </div>
+            </div>
+            <div class="hw-row">
+              <span class="hw-tier-label">dropped ·</span>
+              <div class="hw-pills">
+                <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted);text-decoration:line-through;opacity:0.6;">12.17</span>
+                <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted);text-decoration:line-through;opacity:0.6;">12.18</span>
+                <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted);text-decoration:line-through;opacity:0.6;">12.30</span>
+                <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted);text-decoration:line-through;opacity:0.6;">12.34</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+<!-- ── SUPPLEMENTS ── -->
+<div class="supplements">
+  <div class="supp-title">Supplementary sources — gaps not covered by CSAPP</div>
+  <div class="supp-grid">
+
+    <div class="supp-card priority">
+      <div class="supp-name">Roofline Model — Williams, Waterman &amp; Patterson (2009)</div>
+      <div class="supp-when high">Priority · read before PMPP Ch. 5</div>
+      <div class="supp-desc">The primary analytical framework of PMPP Ch. 5–6 (arithmetic intensity, compute- vs memory-boundedness, speed-of-light analysis). CSAPP's CPE model is the CPU analog but doesn't cover roofline. This is the highest-priority gap.</div>
+    </div>
+
+    <div class="supp-card priority">
+      <div class="supp-name">Dao et al. — FlashAttention (2022)</div>
+      <div class="supp-when high">Priority · read alongside PMPP §20.5</div>
+      <div class="supp-desc">PMPP §20.5 covers flash attention pedagogically but summarizes rather than derives the online softmax correctness argument. The original paper is load-bearing for understanding <em>why</em> the tiled recomputation is correct — not just supplementary context.</div>
+    </div>
+
+    <div class="supp-card">
+      <div class="supp-name">NVIDIA CUDA Programming Guide — SIMT Architecture</div>
+      <div class="supp-when med">Read alongside PMPP Ch. 4</div>
+      <div class="supp-desc">The GPU SIMT execution model (warps, divergence, warp scheduling) has no CSAPP analog. The CUDA guide's SIMT sections provide hardware-accurate framing that PMPP Ch. 4 assumes but doesn't fully derive. Free, always current.</div>
+    </div>
+
+    <div class="supp-card">
+      <div class="supp-name">NVIDIA Hopper Architecture Whitepaper</div>
+      <div class="supp-when med">Read before PMPP Ch. 15 + 20</div>
+      <div class="supp-desc">Tensor cores are a fundamentally different compute unit from scalar FPUs. Neither CSAPP nor Micikevicius covers the hardware mechanism. The whitepaper explains why bf16 behaves differently than fp16 on Hopper vs Ampere — required for PMPP Ch. 15's tensor core and software pipelining coverage.</div>
+    </div>
+
+    <div class="supp-card">
+      <div class="supp-name">Micikevicius et al. — Mixed Precision Training (2018)</div>
+      <div class="supp-when med">Read before PMPP Appendix A + Ch. 20</div>
+      <div class="supp-desc">Already in your plan. Pairs with CSAPP 2.4 (IEEE 754, rounding) and PMPP Appendix A. Explains loss scaling, fp16 accumulation strategy, and why certain operations must stay in fp32. Problem 2.90 (new) builds the precision-loss intuition this paper relies on implicitly.</div>
+    </div>
+
+    <div class="supp-card">
+      <div class="supp-name">Patterson &amp; Hennessy — I/O chapter (COD, ARM ed.)</div>
+      <div class="supp-when low">Read before PMPP Ch. 23 if needed</div>
+      <div class="supp-desc">PCIe and NVLink bandwidth arithmetic for multi-GPU reasoning. Only becomes critical if you engage seriously with PMPP Ch. 23 (multi-GPU programming). Lower priority than the items above.</div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span>CSAPP 3rd ed. · Bryant &amp; O'Hallaron · v2 (post-critique)</span>
+  <span>9 chapters · 4 critical · 5 skim · 35 curated problems · 6 supplements</span>
+</footer>
+
+</body>
+</html>
