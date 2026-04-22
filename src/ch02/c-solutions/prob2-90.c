@@ -54,26 +54,31 @@ float fpwr2(int x) {
   unsigned exp, frac;
   unsigned u;
 
-  // Cases for exponent. The hierarchy goes as
-  // Zero < smallest-denorm < largest-denorm < smallest-norm < one < largest-norm
-  //
+  // IEEE-754 representation:
+  // V = (-1)^S x M X 2^E
   //                              // single precision k = 8
   //                              // ----------------------
-  // E = exponent_k - bias_k      // \in [-126, 127]
   // where:                       
+  //   E = exponent_k - bias_k    // \in [-126, 127]
   //   1 <= exponent_k <= 2^k - 2 // \in [1, 254]
   //   bias_k = 2^(k-1) - 1       // = 127
   //
+  // Cases for exponent. The hierarchy goes as:
+  // Zero < denorm_min < denorm_max < norm_min < one < norm_max
+  //
   // Anything smaller than 1 is rounded to zero, thus in IEEE:
-  if (x < -149) { // anything smaller than largest-denorm ~ e x 2^-126 = 2^-23 x 2^-126
+  if (x < -149) { // anything smaller than denorm_min ~ e x 2^-126 = 2^-23 x 2^-126
     // Too small. Return 0.0                              = 2^-149
     exp = 0;
-    frac = 0;
-  } else if (x < -126) { // anything smaller than largest-denorm ~ (1-e)x2^-126 ~ 2^-126
+    frac = 0; // 0.00000000000000000000001 x 2^-126
+  } else if (x < -126) { // anything smaller than denorm_max ~ (1-e)x2^-126 ~ 2^-126
     // Denormalized result
     exp = 0;
-    frac = 1 << (x + 149);
-  } else if (x < 128) { // anything smaller than largest-norm ~ (2-e)x2^127 ~ 2^128
+    frac = 1 << (x + 149); // V_denorm = (+1) x 0.fraction x 2^Emin = 2^x
+                           //          = 0.00000000000000000000001 x 2^-126 
+                           //          = (fraction x 2^-23) x 2^-126
+                           // -> fraction = 2^(x + 149)
+  } else if (x < 128) { // anything smaller than norm_max ~ (2-e)x2^127 ~ 2^128
     // Normalized result
     exp = x + 127;
     frac = 0;
