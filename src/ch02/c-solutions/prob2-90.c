@@ -70,17 +70,25 @@ float fpwr2(int x) {
   if (x < -149) { // anything smaller than denorm_min ~ e x 2^-126 = 2^-23 x 2^-126
     // Too small. Return 0.0                              = 2^-149
     exp = 0;
-    frac = 0; // 0.00000000000000000000001 x 2^-126
+    frac = 0; 
   } else if (x < -126) { // anything smaller than denorm_max ~ (1-e)x2^-126 ~ 2^-126
     // Denormalized result
-    exp = 0;
-    frac = 1 << (x + 149); // V_denorm = (+1) x 0.fraction x 2^Emin = 2^x
-                           //          = 0.00000000000000000000001 x 2^-126 
-                           //          = (fraction x 2^-23) x 2^-126
-                           // -> fraction = 2^(x + 149)
+    // -------------------
+    // V_denorm = (+1) x 0.fraction x 2^Emin = 2^x
+    //          = 0.00000000000000000000001 x 2^-126 
+    //          = (fraction x 2^-23) x 2^-126
+    // -> exponent_k = 0000 0000
+    // -> fraction = 2^(x + 149)
+    exp = 0;                
+    frac = 1 << (x + 149); 
   } else if (x < 128) { // anything smaller than norm_max ~ (2-e)x2^127 ~ 2^128
     // Normalized result
-    exp = x + 127;
+    // -----------------
+    // V_norm = (+1) x 0.fraction x 2^E = 2^x
+    //        = 0.00000000000000000000000 x 2^(exponent_k - bias_k) 
+    // -> exponent_k = x + bias_k
+    // -> fraction = 2^(x + 149)
+    exp = x + 127; 
     frac = 0;
   } else { 
     // Too big. Return +inf
