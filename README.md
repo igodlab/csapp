@@ -7,24 +7,15 @@ Get a solid foundation to understand low level concepts on computer systems as a
 
 The book is written for systems programmers who need to understand everything from logic gates to OS internals. We'll focus on a targeted subset of the entirety of the book - the parts that explain why hardware behaves the way it does, because GPU programming is fundamentally about exploiting hardware behavior at a low level.
 
-<img src="./images/csapp_cuda_roadmap.svg" width="75%">
-
 ---
 
 ## Purpose
 
-This repository contains my notes, problem solutions, and working C code from a
-**targeted reading of CSAPP 3rd edition** (Bryant & O'Hallaron), filtered
-specifically for GPU programming, CUDA kernel optimization, and ML workloads.
+This repository contains my notes, problem solutions, and working C code from a **targeted reading of CSAPP 3rd edition** (Bryant & O'Hallaron), filtered specifically for GPU programming, CUDA kernel optimization, and ML workloads.
 
-The book is written for systems programmers who need to understand everything
-from logic gates to OS internals. This repo covers a deliberate subset — the
-chapters that explain why hardware behaves the way it does, because GPU
-programming is fundamentally about exploiting hardware behavior at a low level.
+The book is written for systems programmers who need to understand everything from logic gates to OS internals. This repo covers a deliberate subset — the chapters that explain why hardware behaves the way it does, because GPU programming is fundamentally about exploiting hardware behavior at a low level.
 
-The **north star** is *Programming Massively Parallel Processors* (PMPP) 5th
-edition by Hwu, Kirk & El Hajj. Every chapter and problem in this repo was
-selected against its payoff for the following PMPP topics, in priority order:
+The **north star** is *Programming Massively Parallel Processors* (PMPP) 5th edition by Hwu, Kirk & El Hajj. Every chapter and problem in this repo was selected against its payoff for the following PMPP topics, in priority order:
 
 1. Memory coalescing, shared memory tiling, bank conflicts (PMPP Ch. 5, 6, 7, 8, 15)
 2. Warp execution, latency hiding, occupancy (PMPP Ch. 4, 6)
@@ -37,14 +28,13 @@ selected against its payoff for the following PMPP topics, in priority order:
 
 ## Chapter roadmap
 
-The full interactive roadmap (priority tiers, curated sections, problem
-selection, rationale) is available as a rendered HTML file:
+The full interactive roadmap (priority tiers, curated sections, problem selection, rationale) is available as a rendered HTML file:
 
 **[`csapp_roadmap_v2.html`](csapp_roadmap.html)** — open locally in a browser.
 
 A visual overview:
 
-![Roadmap](images/csapp_cuda_roadmap.svg)
+<img src="./images/csapp_cuda_roadmap.svg" width="85%">
 
 ### Chapter coverage summary
 
@@ -110,8 +100,7 @@ and uses [Unity](https://github.com/ThrowTheSwitch/Unity) for C unit tests.
 
 ## Curated problem sets
 
-Problems were tiered by how directly they train a skill required to understand
-a specific PMPP section — not just by chapter topic.
+Problems were tiered by how directly they train a skill required to understand a specific PMPP section — not just by chapter topic.
 
 **Ch. 2 — Data Representation** (43 total → 13 selected)
 - Tier 1: 2.61, 2.63, 2.72, 2.82, 2.87, 2.89, 2.90, 2.96
@@ -156,9 +145,7 @@ This study plan assumes:
 - Some C/C++ programming experience
 - No prior low-level systems or GPU programming background
 
-The goal is to build the systems intuition required to read PMPP fluently — not
-to become a systems programmer. Chapters and problems were selected with that
-distinction in mind.
+The goal is to build the systems intuition required to read PMPP fluently — not to become a systems programmer. Chapters and problems were selected with that distinction in mind.
 
 ---
 
