@@ -16,14 +16,23 @@ void swap(long *xp, long *yp)
 
 
 int main(void) {
-  long x, y;
+  long x, y, xy;
+  long *xp = &x;
+  long *yp = &y;
+  long *xyp = &x;
 
   x = 1000;
-  y = x;
+  y = 3000;
+  printf("Initial values x = %ld, y = %ld\n\n", x, y);
 
-  printf("If this procedure is called with xp equal to yp eg. x=y=%p\nThen memory alliasing gets triggered\n", (void *)&x);
+  // No memory aliasing case
+  printf("If this procedure is called with: xp=%p, yp=%p\n", (void *)xp, (void *)yp);
+  swap(xp, yp);
+  printf("    -> No aliasing occurs, thus we have a succesful swap x=%ld, y=%ld\n", x, y);
 
-  swap(&x, &y);
-  printf("After swapping we get the new values\nx = %ld, y = %ld\n", x, y);
+  // Memory aliasing case
+  printf("\nHowever if the procedure is called with xp=yp=%p\n", (void *)xyp);
+  swap(xp, xyp);
+  printf("    -> aliasing occurs! Yielding x = %ld, y = %ld\n", x, y);
   return 0;
 }
