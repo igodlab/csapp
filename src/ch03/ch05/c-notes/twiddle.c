@@ -34,4 +34,6 @@ int main(void) {
 
   opt_twiddle1(&opt_x);
   printf("\nopt_twiddle1\nx = %ld", opt_x);
+
+  return 0;
 }
